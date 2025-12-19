@@ -24,7 +24,7 @@ st.markdown("""
 
 # --- 2. LIVE DATA CONNECTION ---
 # 🚨 PASTE YOUR NEW LINK ENDING IN 'output=csv' BELOW 🚨
-sheet_url = "https://docs.google.com/spreadsheets/d/1mAyKWlq7KyPw6b3wRKz__LEFddlDz-xVSuWl9mdn6sw/edit?usp=sharing"
+sheet_url = "1mAyKWlq7KyPw6b3wRKz__LEFddlDz-xVSuWl9mdn6sw"
 
 try:
     df = pd.read_csv(sheet_url)
