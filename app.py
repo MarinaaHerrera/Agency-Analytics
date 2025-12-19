@@ -22,21 +22,20 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. LIVE DATA CONNECTION (THE ROBOT) ---
-# Paste your Google Sheet Link here!
-sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpttGz_PaylwRX_TBmFJNz7ggao9ydhIj9U5VROWDyCXPkYItbo_0K2AcwXlrai1pStc8jY4oI3i4n/pubhtml"
+# --- 2. LIVE DATA CONNECTION ---
+# 🚨 PASTE YOUR NEW LINK ENDING IN 'output=csv' BELOW 🚨
+sheet_url = "PASTE_YOUR_CSV_LINK_HERE"
 
 try:
     df = pd.read_csv(sheet_url)
-    # Grab the top row of data
     agency_name_data = str(df['Agency_Name'].iloc[0])
     ad_spend_data = float(df['Ad_Spend'].iloc[0])
     leads_data = float(df['Leads'].iloc[0])
     revenue_data = float(df['Revenue'].iloc[0])
 except Exception as e:
-    # Fallback if sheet fails (so app doesn't crash)
+    # This prevents the app from crashing if the link is wrong
     agency_name_data = "Error Loading Data"
-    ad_spend_data = 0
+    ad_spend_data = 1000 # Default value so we don't divide by zero
     leads_data = 0
     revenue_data = 0
     st.error(f"⚠️ Connection Issue: {e}")
@@ -45,16 +44,18 @@ except Exception as e:
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=40)
     st.markdown("### **AgencyControl™**")
-    
-    # We display the name from the Sheet, but let you override it if needed
     st.info(f"Connected to: **{agency_name_data}**")
-    
     client_name = st.selectbox("Client Portfolio", ["Luxury Estates LLC", "Downtown Dental"])
     st.divider()
 
-# --- 4. DASHBOARD (NOW CONNECTED) ---
+# --- 4. DASHBOARD ---
 st.title(f"{client_name} Performance")
-st.markdown(f"Real-time data linked to: {agency_name_data}")
+
+# --- SAFE ROI CALCULATION ---
+if ad_spend_data > 0:
+    roi_val = revenue_data / ad_spend_data
+else:
+    roi_val = 0
 
 # HELPER FUNCTION
 def display_card(title, value, delta, is_positive=True):
@@ -70,22 +71,19 @@ def display_card(title, value, delta, is_positive=True):
         </div>
     """, unsafe_allow_html=True)
 
-# --- THE METRICS ROW (UPDATED VARIABLES) ---
+# METRICS ROW
 c1, c2, c3, c4 = st.columns(4)
-
-# We use f"${variable:,.0f}" to format 124500 as $124,500 automatically
 with c1: display_card("Total Revenue", f"${revenue_data:,.0f}", "12.5%", True)
 with c2: display_card("Ad Spend (YTD)", f"${ad_spend_data:,.0f}", "3.2%", False)
 with c3: display_card("Qualified Leads", f"{leads_data:,.0f}", "18.4%", True)
-with c4: display_card("ROI Multiplier", f"{(revenue_data/ad_spend_data):.1f}x", "5.1%", True)
+with c4: display_card("ROI Multiplier", f"{roi_val:.1f}x", "5.1%", True)
 
-# --- CHARTS ---
+# CHARTS
 st.markdown("###")
 col_chart, col_table = st.columns([2, 1])
 
 with col_chart:
     st.markdown("### Revenue Trend")
-    # This chart is still dummy data (because your sheet only has 1 row)
     chart_df = pd.DataFrame({'Month': ['Jan','Feb','Mar','Apr','May','Jun'], 'Revenue': [45, 52, 48, 61, 58, 72]})
     fig = px.area(chart_df, x='Month', y='Revenue', template='plotly_dark')
     fig.update_traces(line_color='#00B4D8', fillcolor='rgba(0, 180, 216, 0.3)')
