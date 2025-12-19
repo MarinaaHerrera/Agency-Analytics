@@ -4,6 +4,13 @@ import plotly.graph_objects as go
 import plotly.express as px
 import time
 
+# Add this to your SIDEBAR code
+use_auto_refresh = st.sidebar.checkbox("Enable Live Updates", value=False)
+
+if use_auto_refresh:
+    time.sleep(5) # Wait 5 seconds
+    st.rerun()    # Force a refresh
+
 # --- 1. SETUP & STYLE ---
 st.set_page_config(page_title="Executive Dashboard", page_icon="📈", layout="wide")
 
