@@ -9,8 +9,11 @@ st.set_page_config(page_title="Executive Dashboard", page_icon="📈", layout="w
 # This CSS hides the default Streamlit bars and creates the "Card" look
 st.markdown("""
     <style>
-        /* Background Color */
-        .stApp {background-color: #0E1117;}
+        /* Main Background & Default Text Color */
+        .stApp {
+            background-color: #0E1117;
+            color: #FFFFFF; /* <--- THIS LINE FIXES THE TEXT */
+        }
         
         /* The "Expensive" Card Style */
         .metric-card {
@@ -21,11 +24,18 @@ st.markdown("""
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             margin-bottom: 20px;
         }
-        .metric-title {color: #9CA3AF; font-size: 14px; font-weight: 500;}
+        /* Make card titles slightly lighter for contrast */
+        .metric-title {color: #E0E0E0; font-size: 14px; font-weight: 500;}
         .metric-value {color: #FFFFFF; font-size: 32px; font-weight: 700; margin: 4px 0;}
+        
         .metric-delta {font-size: 12px; font-weight: 600;}
         .positive {color: #10B981;}
         .negative {color: #EF4444;}
+        
+        /* Fix Chart Titles */
+        h1, h2, h3, h4, p, div, span {
+            color: #FFFFFF !important;
+        }
         
         /* Remove Default Streamlit Padding */
         .block-container {padding-top: 2rem; padding-bottom: 2rem;}
