@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+import time
 
 # --- 1. SETUP & STYLE ---
 st.set_page_config(page_title="Executive Dashboard", page_icon="📈", layout="wide")
@@ -22,9 +23,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. LIVE DATA CONNECTION ---
-# 🚨 PASTE YOUR NEW LINK ENDING IN 'output=csv' BELOW 🚨
-sheet_url = "1mAyKWlq7KyPw6b3wRKz__LEFddlDz-xVSuWl9mdn6sw"
+# --- 2. LIVE DATA CONNECTION (INSTANT UPDATE VERSION) ---
+# 🚨 PASTE YOUR SHEET ID BELOW (Not the whole link, just the ID!) 🚨
+sheet_id = "1mAyKWlq7KyPw6b3wRKz__LEFddlDz-xVSuWl9mdn6sw"
+
+# This constructs a "Live Export" URL that updates instantly
+sheet_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 
 try:
     df = pd.read_csv(sheet_url)
@@ -33,9 +37,8 @@ try:
     leads_data = float(df['Leads'].iloc[0])
     revenue_data = float(df['Revenue'].iloc[0])
 except Exception as e:
-    # This prevents the app from crashing if the link is wrong
     agency_name_data = "Error Loading Data"
-    ad_spend_data = 1000 # Default value so we don't divide by zero
+    ad_spend_data = 1000
     leads_data = 0
     revenue_data = 0
     st.error(f"⚠️ Connection Issue: {e}")
@@ -46,12 +49,16 @@ with st.sidebar:
     st.markdown("### **AgencyControl™**")
     st.info(f"Connected to: **{agency_name_data}**")
     client_name = st.selectbox("Client Portfolio", ["Luxury Estates LLC", "Downtown Dental"])
+    
+    # Add a manual Refresh button for good measure
+    if st.button("🔄 Refresh Data"):
+        st.rerun()
     st.divider()
 
 # --- 4. DASHBOARD ---
 st.title(f"{client_name} Performance")
 
-# --- SAFE ROI CALCULATION ---
+# ROI Calculation
 if ad_spend_data > 0:
     roi_val = revenue_data / ad_spend_data
 else:
