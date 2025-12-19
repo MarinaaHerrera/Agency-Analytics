@@ -49,4 +49,42 @@ def display_card(title, value, delta, is_positive=True):
         <div class="metric-card">
             <div class="metric-title">{title}</div>
             <div class="metric-value">{value}</div>
-            <div class="metric-delta {color
+            <div class="metric-delta {color_class}">
+                {arrow} {delta} vs last month
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+# --- 4. MAIN DASHBOARD ---
+st.title(f"{client_name} Performance")
+st.markdown("Real-time cross-channel attribution data.")
+
+# TOP ROW METRICS (Custom HTML Cards)
+c1, c2, c3, c4 = st.columns(4)
+with c1: display_card("Total Revenue", "$124,500", "12.5%", True)
+with c2: display_card("Ad Spend (YTD)", "$14,200", "3.2%", False) # Red means spend went up
+with c3: display_card("Qualified Leads", "342", "18.4%", True)
+with c4: display_card("ROI Multiplier", "8.4x", "5.1%", True)
+
+# CHART ROW (Using Plotly for "Bloomberg" Look)
+st.markdown("###") # Spacer
+col_chart, col_table = st.columns([2, 1])
+
+with col_chart:
+    st.markdown("**Revenue Trend (6 Months)**")
+    # Fancy Gradient Area Chart
+    df = pd.DataFrame({'Month': ['Jan','Feb','Mar','Apr','May','Jun'], 'Revenue': [45, 52, 48, 61, 58, 72]})
+    fig = px.area(df, x='Month', y='Revenue', template='plotly_dark')
+    fig.update_traces(line_color='#00B4D8', fillcolor='rgba(0, 180, 216, 0.3)')
+    fig.update_layout(height=350, margin=dict(l=20, r=20, t=20, b=20), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    st.plotly_chart(fig, use_container_width=True)
+
+with col_table:
+    st.markdown("**Campaign Efficiency**")
+    # Clean Data Table
+    table_data = pd.DataFrame({
+        "Channel": ["Google Ads", "Meta (FB/IG)", "Email", "SEO"],
+        "Spend": ["$5.2k", "$3.1k", "$0.4k", "$0.0k"],
+        "ROAS": ["4.5x", "3.2x", "12.1x", "∞"]
+    })
+    st.dataframe(table_data, hide_index=True, use_container_width=True)
