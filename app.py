@@ -118,3 +118,22 @@ with col_table:
         "ROAS": ["4.5x", "3.2x", "12.1x", "∞"]
     })
     st.dataframe(table_data, hide_index=True, use_container_width=True)
+
+
+#############################################################################
+
+
+# --- 3. LIVE DATA CONNECTION ---
+# Paste your Google Sheet CSV Link below (keep the quotes!)
+sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpttGz_PaylwRX_TBmFJNz7ggao9ydhIj9U5VROWDyCXPkYItbo_0K2AcwXlrai1pStc8jY4oI3i4n/pubhtml"
+
+# This loads the data automatically
+try:
+    df = pd.read_csv(sheet_url)
+    agency_name = str(df['Agency_Name'].iloc[0])
+    ad_spend = float(df['Ad_Spend'].iloc[0])
+    leads = float(df['Leads'].iloc[0])
+    revenue = float(df['Revenue'].iloc[0])
+except Exception as e:
+    st.error(f"❌ Connection Error: {e}")
+    st.stop()
