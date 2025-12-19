@@ -4,13 +4,6 @@ import plotly.graph_objects as go
 import plotly.express as px
 import time
 
-# Add this to your SIDEBAR code
-use_auto_refresh = st.sidebar.checkbox("Enable Live Updates", value=False)
-
-if use_auto_refresh:
-    time.sleep(5) # Wait 5 seconds
-    st.rerun()    # Force a refresh
-
 # --- 1. SETUP & STYLE ---
 st.set_page_config(page_title="Executive Dashboard", page_icon="📈", layout="wide")
 
@@ -30,11 +23,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. LIVE DATA CONNECTION (INSTANT UPDATE VERSION) ---
-# 🚨 PASTE YOUR SHEET ID BELOW (Not the whole link, just the ID!) 🚨
+# --- 2. LIVE DATA CONNECTION ---
+# 🚨 PASTE YOUR SHEET ID BELOW 🚨
 sheet_id = "1mAyKWlq7KyPw6b3wRKz__LEFddlDz-xVSuWl9mdn6sw"
-
-# This constructs a "Live Export" URL that updates instantly
 sheet_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 
 try:
@@ -57,10 +48,14 @@ with st.sidebar:
     st.info(f"Connected to: **{agency_name_data}**")
     client_name = st.selectbox("Client Portfolio", ["Luxury Estates LLC", "Downtown Dental"])
     
-    # Add a manual Refresh button for good measure
-    if st.button("🔄 Refresh Data"):
-        st.rerun()
     st.divider()
+    
+    # --- AUTO-REFRESH TOGGLE ---
+    st.caption("Live Settings")
+    use_auto = st.checkbox("Enable Live Updates (5s)", value=False)
+    
+    if st.button("🔄 Manual Refresh"):
+        st.rerun()
 
 # --- 4. DASHBOARD ---
 st.title(f"{client_name} Performance")
@@ -111,3 +106,8 @@ with col_table:
         "Spend": ["$5.2k", "$3.1k", "$0.0k"],
         "ROAS": ["4.5x", "3.2x", "∞"]
     }), hide_index=True, use_container_width=True)
+
+# --- 5. LOGIC FOR AUTO-REFRESH (MUST BE AT THE END) ---
+if use_auto:
+    time.sleep(5) # Wait 5 seconds
+    st.rerun()    # Then restart the script
